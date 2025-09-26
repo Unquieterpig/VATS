@@ -23,8 +23,8 @@ DEFAULT_PRIORITY = {
 # Colors for different states RGB
 COLOR_IN_USE = QColor(255, 120, 120)     # Red
 COLOR_AVAILABLE = QColor(120, 255, 120)  # Green
-COLOR_ACCOUNT_BLOCKED = QColor(255, 255, 150)  # Yellow
-COLOR_SUGGESTED = QColor(120, 255, 120)  # Light Blue
+COLOR_ACCOUNT_BLOCKED = QColor(255, 140, 0)  # Yellow
+COLOR_SUGGESTED = QColor(120, 255, 120)  # Green
 
 # ---------------- DATA HELPERS ----------------
 def load_data():
@@ -50,7 +50,6 @@ def suggest_headset(headsets):
     if not available:
         return None
 
-    # Use custom priority if available, otherwise use default model priority
     def get_priority(headset):
         if "custom_priority" in headset:
             return headset["custom_priority"]
@@ -96,7 +95,7 @@ class PriorityDialog(QDialog):
 class HeadsetManager(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("VR Lab Headset Manager")
+        self.setWindowTitle("VATS")
         self.resize(750, 450)
 
         self.data = load_data()
