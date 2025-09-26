@@ -153,7 +153,6 @@ class HeadsetManager(QMainWindow):
 
     # -------- Core Logic --------
     def refresh(self):
-        # Filter data based on checkbox state
         filtered_data = self.data
         if self.hide_account_in_use:
             used_accounts = {h["account_id"] for h in self.data if h["in_use"]}
@@ -184,7 +183,6 @@ class HeadsetManager(QMainWindow):
             status_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             status_item.setBackground(color)
 
-            # Priority column
             def get_priority_display(headset):
                 if "custom_priority" in headset:
                     return f"{headset['custom_priority']} (Custom)"
@@ -193,14 +191,12 @@ class HeadsetManager(QMainWindow):
             priority_item = QTableWidgetItem(get_priority_display(h))
             priority_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            # Place items
             self.table.setItem(row, 0, id_item)
             self.table.setItem(row, 1, model_item)
             self.table.setItem(row, 2, account_item)
             self.table.setItem(row, 3, status_item)
             self.table.setItem(row, 4, priority_item)
 
-            # 🔵 Highlight the suggested headset row
             if h["id"] == suggested_id:
                 for col in range(5):
                     self.table.item(row, col).setBackground(COLOR_SUGGESTED)
@@ -233,7 +229,6 @@ class HeadsetManager(QMainWindow):
             QMessageBox.warning(self, "Warning", "Please select only one headset to set its priority.")
             return
         
-        # Find the actual headset data (accounting for filtering)
         row = selected[0].row()
         filtered_data = self.data
         if self.hide_account_in_use:
@@ -249,7 +244,7 @@ class HeadsetManager(QMainWindow):
         dialog = PriorityDialog(headset, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             new_priority = dialog.get_priority()
-            # Find the headset in the original data and update it
+
             for h in self.data:
                 if h["id"] == headset["id"]:
                     h["custom_priority"] = new_priority
@@ -262,7 +257,6 @@ class HeadsetManager(QMainWindow):
             QMessageBox.warning(self, "Warning", "Select at least one headset.")
             return
 
-        # Get filtered data to map table rows to actual headsets
         filtered_data = self.data
         if self.hide_account_in_use:
             used_accounts = {h["account_id"] for h in self.data if h["in_use"]}
@@ -276,7 +270,7 @@ class HeadsetManager(QMainWindow):
                 continue
             
             headset = filtered_data[row]
-            # Find the headset in the original data
+
             for i, h in enumerate(self.data):
                 if h["id"] == headset["id"]:
                     if self.data[i]["in_use"]:
@@ -299,7 +293,6 @@ class HeadsetManager(QMainWindow):
             QMessageBox.warning(self, "Warning", "Select at least one headset.")
             return
 
-        # Get filtered data to map table rows to actual headsets
         filtered_data = self.data
         if self.hide_account_in_use:
             used_accounts = {h["account_id"] for h in self.data if h["in_use"]}
@@ -311,7 +304,7 @@ class HeadsetManager(QMainWindow):
                 continue
             
             headset = filtered_data[row]
-            # Find the headset in the original data
+
             for i, h in enumerate(self.data):
                 if h["id"] == headset["id"]:
                     if self.data[i]["in_use"]:
@@ -321,8 +314,7 @@ class HeadsetManager(QMainWindow):
         self.refresh()
 
     def toggle_headset(self, row, col):
-        """Double click to quickly checkout/return"""
-        # Get filtered data to map table rows to actual headsets
+
         filtered_data = self.data
         if self.hide_account_in_use:
             used_accounts = {h["account_id"] for h in self.data if h["in_use"]}
@@ -332,7 +324,7 @@ class HeadsetManager(QMainWindow):
             return
         
         headset = filtered_data[row]
-        # Find the headset in the original data
+
         for i, h in enumerate(self.data):
             if h["id"] == headset["id"]:
                 if self.data[i]["in_use"]:

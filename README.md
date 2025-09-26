@@ -5,10 +5,10 @@
 ### Headset Management
 - See which headsets are in use, available, or have account conflicts
 - Get recommendations for the next best headset to checkout
-- Automatically prevents multiple headsets from using the same account
+- Prevents multiple headsets from using the same account
 
 ### Controls
-- Set individual headset priorities (perfect for marking damaged units as "last resort")
+- Set individual headset priorities
 - Hide "Account in Use" headsets to focus on truly available units
 - Double-click any headset to instantly checkout/return
 - Select multiple headsets for batch checkout/return
@@ -16,7 +16,6 @@
 ### User Interface
 - Green (Available), Red (In Use), Yellow (Account Blocked)
 - See both custom and default priorities
-- Interface built with PyQt6
 
 ## Quick Start
 
