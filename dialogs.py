@@ -1,6 +1,5 @@
 import datetime
 
-from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
     QComboBox,
     QDialog,
@@ -11,16 +10,15 @@ from PyQt6.QtWidgets import (
     QSpinBox,
 )
 
-# Constants needed by the dialogs
-DEFAULT_PRIORITY = {"Quest3": 1, "Quest2": 2, "HTC_Vive_XR": 3}
-COLOR_IN_USE = QColor(255, 120, 120)
-COLOR_AVAILABLE = QColor(120, 255, 120)
-COLOR_ACCOUNT_BLOCKED = QColor(255, 140, 0)
-
-# Status text constants
-STATUS_IN_USE = "In Use"
-STATUS_ACCOUNT_IN_USE = "Account in use"
-STATUS_AVAILABLE = "Available"
+from config import (
+    COLOR_ACCOUNT_BLOCKED,
+    COLOR_AVAILABLE,
+    COLOR_IN_USE,
+    DEFAULT_PRIORITY,
+    STATUS_ACCOUNT_IN_USE,
+    STATUS_AVAILABLE,
+    STATUS_IN_USE,
+)
 
 
 # ---------------- HEADSET MODEL ----------------
