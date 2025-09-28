@@ -8,21 +8,23 @@ from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
-    QComboBox,
     QDialog,
-    QDialogButtonBox,
-    QFormLayout,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QMainWindow,
     QMessageBox,
     QPushButton,
-    QSpinBox,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
     QWidget,
+)
+
+from dialogs import (
+    AddHeadsetDialog,
+    EditHeadsetDialog,
+    Headset,
+    PriorityDialog,
 )
 
 # ---------------- GLOBAL CONFIG ----------------
@@ -52,68 +54,6 @@ DEFAULT_STYLE = "font-size: 16px; font-weight: bold; padding: 8px;"
 STATUS_IN_USE = "In Use"
 STATUS_ACCOUNT_IN_USE = "Account in use"
 STATUS_AVAILABLE = "Available"
-
-
-# ---------------- HEADSET MODEL ----------------
-class Headset:
-    """Model class for headset data and operations"""
-
-    def __init__(self, data):
-        self.data = data
-
-    @property
-    def id(self):
-        return self.data["id"]
-
-    @property
-    def model(self):
-        return self.data["model"]
-
-    @property
-    def account_id(self):
-        return self.data["account_id"]
-
-    @property
-    def in_use(self):
-        return self.data["in_use"]
-
-    @in_use.setter
-    def in_use(self, value):
-        self.data["in_use"] = value
-
-    @property
-    def last_used(self):
-        return self.data["last_used"]
-
-    @last_used.setter
-    def last_used(self, value):
-        self.data["last_used"] = value
-
-    @property
-    def custom_priority(self):
-        return self.data.get("custom_priority")
-
-    @custom_priority.setter
-    def custom_priority(self, value):
-        self.data["custom_priority"] = value
-
-    def get_priority(self):
-        if self.custom_priority is not None:
-            return self.custom_priority
-        return DEFAULT_PRIORITY.get(self.model, 999)
-
-    def get_priority_display(self):
-        if self.custom_priority is not None:
-            return f"{self.custom_priority} (Custom)"
-        return f"{DEFAULT_PRIORITY.get(self.model, 999)} (Default)"
-
-    def get_status_info(self, used_accounts):
-        if self.in_use:
-            return STATUS_IN_USE, COLOR_IN_USE
-        elif self.account_id in used_accounts:
-            return STATUS_ACCOUNT_IN_USE, COLOR_ACCOUNT_BLOCKED
-        else:
-            return STATUS_AVAILABLE, COLOR_AVAILABLE
 
 
 # ---------------- DATA HELPERS ----------------
@@ -197,164 +137,6 @@ def suggest_headset(headsets):
 
     available.sort(key=lambda h: (get_priority(h), h["last_used"]))
     return available[0]
-
-
-# ---------------- PRIORITY DIALOG ----------------
-class PriorityDialog(QDialog):
-    def __init__(self, headset_data, parent=None):
-        super().__init__(parent)
-        self.headset = Headset(headset_data)
-        self.setWindowTitle(f"Set Priority for {self.headset.id}")
-        self.setModal(True)
-        self.resize(300, 150)
-
-        layout = QFormLayout()
-
-        # Current info
-        info_label = QLabel(f"Model: {self.headset.model}")
-        layout.addRow("Model:", info_label)
-
-        # Priority input
-        self.priority_spin = QSpinBox()
-        self.priority_spin.setRange(1, 100)
-        self.priority_spin.setValue(self.headset.get_priority())
-        self.priority_spin.setToolTip(
-            "Lower numbers = higher priority (1 = highest priority)"
-        )
-        layout.addRow("Priority:", self.priority_spin)
-
-        # Buttons
-        buttons = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-        )
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout.addRow(buttons)
-
-        self.setLayout(layout)
-
-    def get_priority(self):
-        return self.priority_spin.value()
-
-
-# ---------------- ADD HEADSET DIALOG ----------------
-class AddHeadsetDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Add New Headset")
-        self.setModal(True)
-        self.resize(400, 200)
-
-        layout = QFormLayout()
-
-        # ID input
-        self.id_input = QLineEdit()
-        self.id_input.setPlaceholderText("e.g., QuestyMcQuestface")
-        layout.addRow("Headset ID:", self.id_input)
-
-        # Model selection
-        self.model_combo = QComboBox()
-        self.model_combo.addItems(["Quest3", "Quest2", "HTC_Vive_XR"])
-        layout.addRow("Model:", self.model_combo)
-
-        # Account ID input
-        self.account_input = QLineEdit()
-        self.account_input.setPlaceholderText("e.g., account_1")
-        layout.addRow("Account ID:", self.account_input)
-
-        # Buttons
-        buttons = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-        )
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout.addRow(buttons)
-
-        self.setLayout(layout)
-
-    def get_headset_data(self):
-        return {
-            "id": self.id_input.text().strip(),
-            "model": self.model_combo.currentText(),
-            "account_id": self.account_input.text().strip(),
-            "last_used": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            "in_use": False,
-        }
-
-    def validate_input(self):
-        id_text = self.id_input.text().strip()
-        account_text = self.account_input.text().strip()
-        
-        if not id_text:
-            return False, "Headset ID cannot be empty"
-        if not account_text:
-            return False, "Account ID cannot be empty"
-        
-        return True, None
-
-
-# ---------------- EDIT HEADSET DIALOG ----------------
-class EditHeadsetDialog(QDialog):
-    def __init__(self, headset_data, parent=None):
-        super().__init__(parent)
-        self.original_id = headset_data["id"]
-        self.setWindowTitle(f"Edit Headset: {self.original_id}")
-        self.setModal(True)
-        self.resize(400, 200)
-
-        layout = QFormLayout()
-
-        # ID input
-        self.id_input = QLineEdit()
-        self.id_input.setText(headset_data["id"])
-        self.id_input.setPlaceholderText("e.g., QuestyMcQuestface")
-        layout.addRow("Headset ID:", self.id_input)
-
-        # Model selection
-        self.model_combo = QComboBox()
-        self.model_combo.addItems(["Quest3", "Quest2", "HTC_Vive_XR"])
-        self.model_combo.setCurrentText(headset_data["model"])
-        layout.addRow("Model:", self.model_combo)
-
-        # Account ID input
-        self.account_input = QLineEdit()
-        self.account_input.setText(headset_data["account_id"])
-        self.account_input.setPlaceholderText("e.g., account_1")
-        layout.addRow("Account ID:", self.account_input)
-
-        # Buttons
-        buttons = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-        )
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout.addRow(buttons)
-
-        self.setLayout(layout)
-
-    def get_headset_data(self):
-        return {
-            "id": self.id_input.text().strip(),
-            "model": self.model_combo.currentText(),
-            "account_id": self.account_input.text().strip(),
-            "last_used": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            "in_use": False,
-        }
-
-    def validate_input(self, existing_ids):
-        id_text = self.id_input.text().strip()
-        account_text = self.account_input.text().strip()
-        
-        if not id_text:
-            return False, "Headset ID cannot be empty"
-        if not account_text:
-            return False, "Account ID cannot be empty"
-        
-        # Check for duplicate ID (excluding the original ID)
-        if id_text != self.original_id and id_text in existing_ids:
-            return False, f"Headset ID '{id_text}' already exists. Please choose a different ID."
-        
-        return True, None
 
 
 # ---------------- MAIN GUI ----------------
@@ -608,19 +390,16 @@ class HeadsetManager(QMainWindow):
         self.refresh()
 
     def add_headset(self):
-        """Add a new headset to the system"""
         dialog = AddHeadsetDialog(self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            # Validate input
+
             is_valid, error_msg = dialog.validate_input()
             if not is_valid:
                 QMessageBox.warning(self, "Invalid Input", error_msg)
                 return
             
-            # Get the new headset data
             new_headset = dialog.get_headset_data()
             
-            # Check for duplicate ID
             existing_ids = {h["id"] for h in self.data}
             if new_headset["id"] in existing_ids:
                 QMessageBox.warning(
@@ -630,7 +409,6 @@ class HeadsetManager(QMainWindow):
                 )
                 return
             
-            # Add the new headset
             self.data.append(new_headset)
             self.refresh()
             
@@ -641,13 +419,11 @@ class HeadsetManager(QMainWindow):
             )
 
     def remove_headset(self):
-        """Remove selected headset(s) from the system"""
         selected = self.table.selectionModel().selectedRows()
         if not selected:
             QMessageBox.warning(self, "Warning", "Select at least one headset to remove.")
             return
 
-        # Get the headsets to remove
         filtered_data = filter_headsets(self.data, self.hide_account_in_use)
         headsets_to_remove = []
         
@@ -659,7 +435,6 @@ class HeadsetManager(QMainWindow):
         if not headsets_to_remove:
             return
 
-        # Check if any selected headsets are in use
         in_use_headsets = [h for h in headsets_to_remove if h["in_use"]]
         if in_use_headsets:
             in_use_ids = [h["id"] for h in in_use_headsets]
@@ -670,7 +445,6 @@ class HeadsetManager(QMainWindow):
             )
             return
 
-        # Confirmation dialog
         headset_ids = [h["id"] for h in headsets_to_remove]
         reply = QMessageBox.question(
             self,
@@ -681,7 +455,6 @@ class HeadsetManager(QMainWindow):
         )
 
         if reply == QMessageBox.StandardButton.Yes:
-            # Remove the headsets from the data
             ids_to_remove = {h["id"] for h in headsets_to_remove}
             self.data = [h for h in self.data if h["id"] not in ids_to_remove]
             self.refresh()
@@ -693,7 +466,6 @@ class HeadsetManager(QMainWindow):
             )
 
     def edit_headset(self):
-        """Edit selected headset details"""
         selected = self.table.selectionModel().selectedRows()
         if not selected:
             QMessageBox.warning(self, "Warning", "Select a headset to edit.")
@@ -705,7 +477,6 @@ class HeadsetManager(QMainWindow):
             )
             return
 
-        # Get the selected headset
         filtered_data = filter_headsets(self.data, self.hide_account_in_use)
         row = selected[0].row()
         
@@ -714,7 +485,6 @@ class HeadsetManager(QMainWindow):
 
         headset_data = filtered_data[row]
         
-        # Check if headset is in use
         if headset_data["in_use"]:
             QMessageBox.warning(
                 self, 
@@ -723,24 +493,20 @@ class HeadsetManager(QMainWindow):
             )
             return
 
-        # Open edit dialog
         dialog = EditHeadsetDialog(headset_data, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            # Validate input
             existing_ids = {h["id"] for h in self.data}
             is_valid, error_msg = dialog.validate_input(existing_ids)
+            
             if not is_valid:
                 QMessageBox.warning(self, "Invalid Input", error_msg)
                 return
             
-            # Get the updated headset data
             updated_headset = dialog.get_headset_data()
             
-            # Preserve the original in_use status and last_used timestamp
             updated_headset["in_use"] = headset_data["in_use"]
             updated_headset["last_used"] = headset_data["last_used"]
             
-            # Find and update the headset in the data
             for i, h in enumerate(self.data):
                 if h["id"] == headset_data["id"]:
                     self.data[i] = updated_headset
