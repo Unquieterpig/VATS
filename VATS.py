@@ -4,7 +4,7 @@ import os
 import sys
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import QColor, QIcon
 from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -146,6 +146,8 @@ class HeadsetManager(QMainWindow):
         super().__init__()
         self.setWindowTitle("VATS")
         self.resize(750, 450)
+        
+        self.setWindowIcon(QIcon.fromTheme("applications-games", QIcon()))
 
         self.data = load_data()
         self.hide_account_in_use = False
