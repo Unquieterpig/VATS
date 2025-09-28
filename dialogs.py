@@ -168,12 +168,12 @@ class AddHeadsetDialog(QDialog):
     def validate_input(self):
         id_text = self.id_input.text().strip()
         account_text = self.account_input.text().strip()
-        
+
         if not id_text:
             return False, "Headset ID cannot be empty"
         if not account_text:
             return False, "Account ID cannot be empty"
-        
+
         return True, None
 
 
@@ -228,13 +228,16 @@ class EditHeadsetDialog(QDialog):
     def validate_input(self, existing_ids):
         id_text = self.id_input.text().strip()
         account_text = self.account_input.text().strip()
-        
+
         if not id_text:
             return False, "Headset ID cannot be empty"
         if not account_text:
             return False, "Account ID cannot be empty"
 
         if id_text != self.original_id and id_text in existing_ids:
-            return False, f"Headset ID '{id_text}' already exists. Please choose a different ID."
-        
+            return (
+                False,
+                f"Headset ID '{id_text}' already exists. Please choose a different ID.",
+            )
+
         return True, None

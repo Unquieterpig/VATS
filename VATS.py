@@ -21,13 +21,6 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from dialogs import (
-    AddHeadsetDialog,
-    EditHeadsetDialog,
-    Headset,
-    PriorityDialog,
-)
-
 from config import (
     COLOR_SUGGESTED,
     DATA_FILE,
@@ -37,6 +30,12 @@ from config import (
     SUGGESTED_STYLE,
     TABLE_COLUMN_COUNT,
     TABLE_COLUMNS,
+)
+from dialogs import (
+    AddHeadsetDialog,
+    EditHeadsetDialog,
+    Headset,
+    PriorityDialog,
 )
 
 
@@ -129,7 +128,7 @@ class HeadsetManager(QMainWindow):
         super().__init__()
         self.setWindowTitle("VATS")
         self.resize(750, 450)
-        
+
         self.setWindowIcon(QIcon.fromTheme("applications-games", QIcon()))
 
         self.data = load_data()
@@ -160,11 +159,12 @@ class HeadsetManager(QMainWindow):
         self.table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.table.cellDoubleClicked.connect(self.toggle_headset)
-        
-        # Make table columns stretch to fill the full width
+
         self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        
+        self.table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+
         layout.addWidget(self.table)
 
         # Buttons
@@ -383,41 +383,42 @@ class HeadsetManager(QMainWindow):
     def add_headset(self):
         dialog = AddHeadsetDialog(self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
-
             is_valid, error_msg = dialog.validate_input()
             if not is_valid:
                 QMessageBox.warning(self, "Invalid Input", error_msg)
                 return
-            
+
             new_headset = dialog.get_headset_data()
-            
+
             existing_ids = {h["id"] for h in self.data}
             if new_headset["id"] in existing_ids:
                 QMessageBox.warning(
-                    self, 
-                    "Duplicate ID", 
-                    f"Headset ID '{new_headset['id']}' already exists. Please choose a different ID."
+                    self,
+                    "Duplicate ID",
+                    f"Headset ID '{new_headset['id']}' already exists. Please choose a different ID.",
                 )
                 return
-            
+
             self.data.append(new_headset)
             self.refresh()
-            
+
             QMessageBox.information(
-                self, 
-                "Success", 
-                f"Headset '{new_headset['id']}' has been added successfully."
+                self,
+                "Success",
+                f"Headset '{new_headset['id']}' has been added successfully.",
             )
 
     def remove_headset(self):
         selected = self.table.selectionModel().selectedRows()
         if not selected:
-            QMessageBox.warning(self, "Warning", "Select at least one headset to remove.")
+            QMessageBox.warning(
+                self, "Warning", "Select at least one headset to remove."
+            )
             return
 
         filtered_data = filter_headsets(self.data, self.hide_account_in_use)
         headsets_to_remove = []
-        
+
         for idx in selected:
             row = idx.row()
             if row < len(filtered_data):
@@ -430,9 +431,9 @@ class HeadsetManager(QMainWindow):
         if in_use_headsets:
             in_use_ids = [h["id"] for h in in_use_headsets]
             QMessageBox.warning(
-                self, 
-                "Cannot Remove", 
-                f"Cannot remove headsets that are currently in use: {', '.join(in_use_ids)}"
+                self,
+                "Cannot Remove",
+                f"Cannot remove headsets that are currently in use: {', '.join(in_use_ids)}",
             )
             return
 
@@ -442,18 +443,18 @@ class HeadsetManager(QMainWindow):
             "Confirm Removal",
             f"Are you sure you want to remove the following headset(s)?\n\n{', '.join(headset_ids)}\n\nThis action cannot be undone.",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No
+            QMessageBox.StandardButton.No,
         )
 
         if reply == QMessageBox.StandardButton.Yes:
             ids_to_remove = {h["id"] for h in headsets_to_remove}
             self.data = [h for h in self.data if h["id"] not in ids_to_remove]
             self.refresh()
-            
+
             QMessageBox.information(
-                self, 
-                "Success", 
-                f"Removed {len(headsets_to_remove)} headset(s) successfully."
+                self,
+                "Success",
+                f"Removed {len(headsets_to_remove)} headset(s) successfully.",
             )
 
     def edit_headset(self):
@@ -470,17 +471,17 @@ class HeadsetManager(QMainWindow):
 
         filtered_data = filter_headsets(self.data, self.hide_account_in_use)
         row = selected[0].row()
-        
+
         if row >= len(filtered_data):
             return
 
         headset_data = filtered_data[row]
-        
+
         if headset_data["in_use"]:
             QMessageBox.warning(
-                self, 
-                "Cannot Edit", 
-                f"Cannot edit headset '{headset_data['id']}' while it's in use. Please return it first."
+                self,
+                "Cannot Edit",
+                f"Cannot edit headset '{headset_data['id']}' while it's in use. Please return it first.",
             )
             return
 
@@ -488,27 +489,27 @@ class HeadsetManager(QMainWindow):
         if dialog.exec() == QDialog.DialogCode.Accepted:
             existing_ids = {h["id"] for h in self.data}
             is_valid, error_msg = dialog.validate_input(existing_ids)
-            
+
             if not is_valid:
                 QMessageBox.warning(self, "Invalid Input", error_msg)
                 return
-            
+
             updated_headset = dialog.get_headset_data()
-            
+
             updated_headset["in_use"] = headset_data["in_use"]
             updated_headset["last_used"] = headset_data["last_used"]
-            
+
             for i, h in enumerate(self.data):
                 if h["id"] == headset_data["id"]:
                     self.data[i] = updated_headset
                     break
-            
+
             self.refresh()
-            
+
             QMessageBox.information(
-                self, 
-                "Success", 
-                f"Headset '{updated_headset['id']}' has been updated successfully."
+                self,
+                "Success",
+                f"Headset '{updated_headset['id']}' has been updated successfully.",
             )
 
 
