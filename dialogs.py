@@ -1,7 +1,3 @@
-"""
-Dialog classes for VATS (VR Headset Management System)
-"""
-
 import datetime
 
 from PyQt6.QtGui import QColor

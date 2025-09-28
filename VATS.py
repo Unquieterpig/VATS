@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QCheckBox,
     QDialog,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
     QMainWindow,
     QMessageBox,
@@ -174,6 +175,11 @@ class HeadsetManager(QMainWindow):
         self.table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.table.cellDoubleClicked.connect(self.toggle_headset)
+        
+        # Make table columns stretch to fill the full width
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        
         layout.addWidget(self.table)
 
         # Buttons
