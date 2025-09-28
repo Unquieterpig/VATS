@@ -117,7 +117,32 @@ class Headset:
 # ---------------- DATA HELPERS ----------------
 def load_data():
     if not os.path.exists(DATA_FILE):
-        return []
+        sample_data = [
+            {
+                "id": "Quest3-001",
+                "model": "Quest3",
+                "account_id": "demo_account_1",
+                "last_used": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "in_use": False,
+            },
+            {
+                "id": "Quest2-001",
+                "model": "Quest2",
+                "account_id": "demo_account_2",
+                "last_used": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "in_use": False,
+            },
+            {
+                "id": "HTC-001",
+                "model": "HTC_Vive_XR",
+                "account_id": "demo_account_3",
+                "last_used": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "in_use": False,
+            },
+        ]
+
+        save_data(sample_data)
+        return sample_data
     with open(DATA_FILE, "r") as f:
         return json.load(f)
 
@@ -328,7 +353,9 @@ class HeadsetManager(QMainWindow):
 
     def checkout_headset(self, headset_data):
         headset_data["in_use"] = True
-        headset_data["last_used"] = datetime.datetime.now().isoformat()
+        headset_data["last_used"] = datetime.datetime.now(
+            datetime.timezone.utc
+        ).isoformat()
 
     # -------- Core Logic --------
     def refresh(self):
