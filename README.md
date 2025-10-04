@@ -10,7 +10,6 @@
 - **Priority System**: Customize headset priorities for better allocation
 - **Responsive UI**: Modern Material-UI interface that works on all devices
 - **Filter Options**: Hide headsets with accounts already in use
-- **Persistent Login**: Stay logged in until browser is closed (24-hour session)
 
 ## Technology Stack
 
