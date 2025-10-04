@@ -1,7 +1,5 @@
 # VATS - Varia's Awesome Tracking Software (Web Version)
 
-A modern web application for managing VR headsets, converted from the original PyQt6 desktop application.
-
 ## Features
 
 - **Password Protection**: Simple password authentication to secure access
@@ -16,10 +14,10 @@ A modern web application for managing VR headsets, converted from the original P
 
 ## Technology Stack
 
-- **Frontend**: React 18 with TypeScript, Material-UI (MUI)
-- **Backend**: Node.js with Express
-- **Data Storage**: JSON file-based storage (easily replaceable with database)
-- **API**: RESTful API with proper error handling
+- **Frontend**: React with TypeScript, Material-UI (MUI)
+- **Backend**: Node.js
+- **Data Storage**: JSON
+- **API**: RESTful API
 
 ## Quick Start
 
@@ -85,23 +83,6 @@ The application uses environment variables for configuration:
 ### Authentication Configuration
 The default password can be changed in `client-vite/src/config/auth.ts`:
 
-```typescript
-export const AUTH_CONFIG = {
-  DEFAULT_PASSWORD: 'Varia4Lyfe', // Change this to your desired password
-  AUTH_DURATION: 24 * 60 * 60 * 1000, // 24 hours
-  // ...
-};
-```
-
-**Default Password**: `Varia4Lyfe`
-
-## Data Migration
-
-To migrate your existing headset data from the original PyQt6 application:
-
-1. Copy your `headsets.json` file to `server/data/headsets.json`
-2. The web application will automatically load and use this data
-
 ## Deployment
 
 ### Option 1: Traditional Web Hosting
@@ -144,23 +125,6 @@ CMD ["npm", "run", "server"]
 - Frontend: Deploy to Vercel, Netlify, or GitHub Pages
 - Backend: Deploy to Vercel Functions, AWS Lambda, or similar
 
-## Differences from Original
-
-### Improvements
-- **Web-based**: Accessible from any device with a browser
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Modern UI**: Material Design components with better UX
-- **Real-time Updates**: No need to manually refresh
-- **Better Error Handling**: Clear error messages and validation
-- **Scalable Architecture**: Easy to extend with new features
-
-### Maintained Features
-- All core functionality from the original application
-- Same data structure and business logic
-- Priority-based suggestions
-- Account conflict prevention
-- Status filtering
-
 ## Contributing
 
 1. Fork the repository
@@ -171,4 +135,4 @@ CMD ["npm", "run", "server"]
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License
