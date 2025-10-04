@@ -1,0 +1,79 @@
+[
+  {
+    "id": "FFXIV_3",
+    "model": "HTC_Vive_XR",
+    "account_id": "acc3",
+    "last_used": "2025-09-26T01:25:37.409108",
+    "in_use": false
+  },
+  {
+    "id": "Mario",
+    "model": "Quest2",
+    "account_id": "acc1",
+    "last_used": "2025-09-26T01:17:25.905846",
+    "in_use": false
+  },
+  {
+    "id": "Donkey Kong",
+    "model": "Quest2",
+    "account_id": "acc1",
+    "last_used": "2025-09-25T23:06:46.819493",
+    "in_use": false
+  },
+  {
+    "id": "Tails",
+    "model": "Quest2",
+    "account_id": "acc1",
+    "last_used": "2025-09-25T22:18:39.300753",
+    "in_use": false
+  },
+  {
+    "id": "Wario",
+    "model": "Quest2",
+    "account_id": "acc1",
+    "last_used": "2025-09-25T22:18:39.300753",
+    "in_use": false
+  },
+  {
+    "id": "Yoshi",
+    "model": "Quest2",
+    "account_id": "acc1",
+    "last_used": "2025-09-25T23:10:44.399701",
+    "in_use": false
+  },
+  {
+    "id": "Samus",
+    "model": "Quest3",
+    "account_id": "acc1",
+    "last_used": "2025-09-28T03:20:05.324471+00:00",
+    "in_use": false
+  },
+  {
+    "id": "Gengar",
+    "model": "Quest3",
+    "account_id": "acc2",
+    "last_used": "2025-09-28T04:00:35.915209+00:00",
+    "in_use": false
+  },
+  {
+    "id": "Dragonite",
+    "model": "Quest3",
+    "account_id": "acc2",
+    "last_used": "2025-09-28T04:22:37.637502+00:00",
+    "in_use": false
+  },
+  {
+    "id": "Sylveon",
+    "model": "Quest3",
+    "account_id": "acc2",
+    "last_used": "2025-09-28T04:22:44.978856+00:00",
+    "in_use": false
+  },
+  {
+    "id": "Shaymin",
+    "model": "Quest3",
+    "account_id": "acc2",
+    "last_used": "2025-09-26T01:25:15.832527",
+    "in_use": false
+  }
+]

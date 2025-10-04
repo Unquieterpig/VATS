@@ -1,0 +1,2 @@
+# This file ensures the data directory is tracked by git
+# The actual headsets.json file should be created when the server runs

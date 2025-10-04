@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  vats:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    volumes:
+      - ./server/data:/app/server/data
+    restart: unless-stopped
