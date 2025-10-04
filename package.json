@@ -1,19 +1,16 @@
 {
   "name": "vats-web",
   "version": "1.0.0",
-  "description": "VR Asset Tracking System - Web Version",
+  "description": "Varia's Awesome Tracking Software - Web Version",
   "main": "server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "dev-vite": "concurrently \"npm run server\" \"npm run client-vite\"",
     "server": "cd server && npm run dev",
-    "client": "cd client && npm start",
-    "client-vite": "cd client-vite && npm run dev",
-    "build": "cd client && npm run build",
-    "build-vite": "cd client-vite && npm run build",
+    "client": "cd client-vite && npm run dev",
+    "build": "cd client-vite && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client-vite && npm install",
-    "clean": "rm -rf node_modules client/node_modules client-vite/node_modules server/node_modules",
-    "clean-win": "rmdir /s /q node_modules client\\node_modules client-vite\\node_modules server\\node_modules"
+    "clean": "rm -rf node_modules client-vite/node_modules server/node_modules",
+    "clean-win": "rmdir /s /q node_modules client-vite\\node_modules server\\node_modules"
   },
   "keywords": ["vr", "tracking", "headset", "management"],
   "author": "",

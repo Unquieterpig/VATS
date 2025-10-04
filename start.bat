@@ -1,5 +1,5 @@
 @echo off
-echo Starting VATS Web Application...
+echo Starting Varia's Awesome Tracking Software...
 echo.
 
 echo Installing dependencies...
@@ -12,8 +12,8 @@ call npm install
 cd ..
 
 echo Installing client dependencies...
-cd client
-call npm install --legacy-peer-deps
+cd client-vite
+call npm install
 cd ..
 
 echo.

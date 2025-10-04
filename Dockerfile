@@ -7,18 +7,18 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 COPY server/package*.json ./server/
-COPY client/package*.json ./client/
+COPY client-vite/package*.json ./client-vite/
 
 # Install dependencies
 RUN npm install && \
     cd server && npm install && \
-    cd ../client && npm install
+    cd ../client-vite && npm install
 
 # Copy source code
 COPY . .
 
 # Build frontend
-RUN cd client && npm run build
+RUN cd client-vite && npm run build
 
 # Expose port
 EXPOSE 3001

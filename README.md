@@ -1,9 +1,10 @@
-# VATS - VR Asset Tracking System (Web Version)
+# VATS - Varia's Awesome Tracking Software (Web Version)
 
 A modern web application for managing VR headsets, converted from the original PyQt6 desktop application.
 
 ## Features
 
+- **Password Protection**: Simple password authentication to secure access
 - **Headset Management**: Add, edit, and remove VR headsets
 - **Real-time Status Tracking**: Monitor which headsets are in use or available
 - **Smart Suggestions**: Get priority-based recommendations for the next available headset
@@ -11,6 +12,7 @@ A modern web application for managing VR headsets, converted from the original P
 - **Priority System**: Customize headset priorities for better allocation
 - **Responsive UI**: Modern Material-UI interface that works on all devices
 - **Filter Options**: Hide headsets with accounts already in use
+- **Persistent Login**: Stay logged in until browser is closed (24-hour session)
 
 ## Technology Stack
 
@@ -37,6 +39,11 @@ A modern web application for managing VR headsets, converted from the original P
    ```bash
    npm run dev
    ```
+   
+   Or use the startup script:
+   ```bash
+   start.bat
+   ```
 
 This will start:
 - Backend server on http://localhost:3001
@@ -54,6 +61,8 @@ This will start:
    npm run server
    ```
 
+The built files will be in the `client-vite/dist` folder.
+
 ## API Endpoints
 
 - `GET /api/headsets` - Get all headsets (with optional filtering)
@@ -68,10 +77,23 @@ This will start:
 
 ## Configuration
 
+### Server Configuration
 The application uses environment variables for configuration:
 
 - `PORT` - Server port (default: 3001)
-- `REACT_APP_API_URL` - API base URL for frontend (default: http://localhost:3001/api)
+
+### Authentication Configuration
+The default password can be changed in `client-vite/src/config/auth.ts`:
+
+```typescript
+export const AUTH_CONFIG = {
+  DEFAULT_PASSWORD: 'Varia4Lyfe', // Change this to your desired password
+  AUTH_DURATION: 24 * 60 * 60 * 1000, // 24 hours
+  // ...
+};
+```
+
+**Default Password**: `Varia4Lyfe`
 
 ## Data Migration
 

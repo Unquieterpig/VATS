@@ -1,7 +1,7 @@
 {
   "name": "vats-server",
   "version": "1.0.0",
-  "description": "VATS Backend API",
+  "description": "Varia's Awesome Tracking Software Backend API",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
