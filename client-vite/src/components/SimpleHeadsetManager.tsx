@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  CircularProgress,
-  Alert,
-  Card,
-  CardContent,
-  Chip,
-} from '@mui/material';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { headsetApi } from '../services/api';
 import { Headset } from '../types';
+import { 
+  RefreshCw, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle,
+  Monitor,
+  User,
+  Clock
+} from 'lucide-react';
 
 interface SimpleHeadsetManagerProps {
   onShowAlert: (message: string, severity?: 'success' | 'error') => void;
@@ -21,11 +24,12 @@ const SimpleHeadsetManager: React.FC<SimpleHeadsetManagerProps> = ({ onShowAlert
   const [headsets, setHeadsets] = useState<Headset[]>([]);
   const [suggestion, setSuggestion] = useState<Headset | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hideAccountInUse, setHideAccountInUse] = useState(false);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const response = await headsetApi.getHeadsets(false);
+      const response = await headsetApi.getHeadsets(hideAccountInUse);
       
       if (response.headsets && response.suggestion !== undefined) {
         setHeadsets(response.headsets);
@@ -41,7 +45,7 @@ const SimpleHeadsetManager: React.FC<SimpleHeadsetManagerProps> = ({ onShowAlert
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [hideAccountInUse]);
 
   const handleCheckout = async (headsetId: string) => {
     try {
@@ -67,8 +71,8 @@ const SimpleHeadsetManager: React.FC<SimpleHeadsetManagerProps> = ({ onShowAlert
     }
   };
 
-  const getStatusColor = (headset: Headset) => {
-    if (headset.in_use) return 'error';
+  const getStatusVariant = (headset: Headset) => {
+    if (headset.in_use) return 'destructive';
     return 'success';
   };
 
@@ -79,89 +83,127 @@ const SimpleHeadsetManager: React.FC<SimpleHeadsetManagerProps> = ({ onShowAlert
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <CircularProgress />
-      </Box>
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Loading headsets...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box>
+    <div className="space-y-6">
       {/* Suggestion Banner */}
-      <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
-        <Typography 
-          variant="h6" 
-          align="center"
-          sx={{
-            color: suggestion ? 'success.main' : 'error.main',
-            fontWeight: 'bold',
-          }}
-        >
-          {suggestion 
-            ? `Suggested Next Headset: ${suggestion.id} (${suggestion.model})`
-            : 'No Headsets Available'
-          }
-        </Typography>
-      </Paper>
+      <Card className={suggestion ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950' : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950'}>
+        <CardContent className="pt-6">
+          <div className="text-center">
+            <h3 className={`text-lg font-semibold ${suggestion ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+              {suggestion ? (
+                <div className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" />
+                  Suggested Next Headset: {suggestion.id} ({suggestion.model})
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2">
+                  <XCircle className="h-5 w-5" />
+                  No Headsets Available
+                </div>
+              )}
+            </h3>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Headsets List */}
-      <Typography variant="h5" gutterBottom>
-        VR Headsets ({headsets.length} total)
-      </Typography>
+      {/* Controls */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">
+          VR Headsets ({headsets.length} total)
+        </h2>
+        
+        <div className="flex items-center gap-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="hide-account-in-use"
+              checked={hideAccountInUse}
+              onCheckedChange={setHideAccountInUse}
+            />
+            <label htmlFor="hide-account-in-use" className="text-sm font-medium">
+              Hide 'Account in Use' headsets
+            </label>
+          </div>
+          
+          <Button variant="outline" onClick={loadData} className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+        </div>
+      </div>
       
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {/* Headsets Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {headsets.map((headset) => (
-          <Card key={headset.id} variant="outlined">
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                  <Typography variant="h6">{headset.id}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Model: {headset.model} | Account: {headset.account_id}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Last Used: {new Date(headset.last_used).toLocaleString()}
-                  </Typography>
-                </Box>
+          <Card key={headset.id} className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Monitor className="h-5 w-5" />
+                {headset.id}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Monitor className="h-4 w-4" />
+                  <span>Model: {headset.model}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  <span>Account: {headset.account_id}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  <span>Last Used: {new Date(headset.last_used).toLocaleDateString()}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between pt-2">
+                <Badge variant={getStatusVariant(headset)}>
+                  {getStatusText(headset)}
+                </Badge>
                 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Chip
-                    label={getStatusText(headset)}
-                    color={getStatusColor(headset) as any}
-                    size="small"
-                  />
-                  
-                  {headset.in_use ? (
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => handleReturn(headset.id)}
-                    >
-                      Return
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleCheckout(headset.id)}
-                    >
-                      Checkout
-                    </Button>
-                  )}
-                </Box>
-              </Box>
+                {headset.in_use ? (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleReturn(headset.id)}
+                  >
+                    Return
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => handleCheckout(headset.id)}
+                  >
+                    Checkout
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
         ))}
-      </Box>
+      </div>
 
-      {/* Refresh Button */}
-      <Box sx={{ mt: 3, textAlign: 'center' }}>
-        <Button variant="outlined" onClick={loadData}>
-          Refresh Data
-        </Button>
-      </Box>
-    </Box>
+      {headsets.length === 0 && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-2">
+              <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto" />
+              <p className="text-muted-foreground">No headsets found</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 };
 

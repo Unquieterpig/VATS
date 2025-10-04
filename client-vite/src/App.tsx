@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  Alert,
-  Snackbar,
-  Paper,
-  TextField,
-  Button,
-  Card,
-  CardContent,
-} from '@mui/material';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { AUTH_CONFIG } from './config/auth';
+import { 
+  Monitor, 
+  LogOut, 
+  Wifi, 
+  WifiOff, 
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertCircle
+} from 'lucide-react';
 
 // Password authentication component
 function LoginPrompt({ onLogin }: { onLogin: () => void }) {
@@ -35,54 +40,49 @@ function LoginPrompt({ onLogin }: { onLogin: () => void }) {
   };
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    }}>
-      <Card sx={{ maxWidth: 400, width: '100%', mx: 2 }}>
-        <CardContent sx={{ p: 4 }}>
-          <Box sx={{ textAlign: 'center', mb: 3 }}>
-            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              VATS
-            </Typography>
-            <Typography variant="h6" color="text.secondary">
-              Varia's Awesome Tracking Software
-            </Typography>
-          </Box>
-          
-          <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={!!error}
-              helperText={error}
-              sx={{ mb: 3 }}
-              autoFocus
-            />
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-2xl border-0 bg-background/95 backdrop-blur">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-bold text-primary flex items-center justify-center gap-2">
+            <Monitor className="h-8 w-8" />
+            VATS
+          </CardTitle>
+          <p className="text-muted-foreground">
+            Varia's Awesome Tracking Software
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                autoFocus
+                className={error ? 'border-destructive' : ''}
+              />
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+            </div>
             
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
-              sx={{ mb: 2 }}
-            >
+            <Button type="submit" className="w-full" size="lg">
               Access System
             </Button>
           </form>
           
-          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mt: 2 }}>
+          <p className="text-sm text-muted-foreground text-center">
             Enter the system password to continue
-          </Typography>
+          </p>
         </CardContent>
       </Card>
-    </Box>
+    </div>
   );
 }
 
@@ -142,54 +142,95 @@ function App() {
   const SimpleHeadsetManager = React.lazy(() => import('./components/SimpleHeadsetManager'));
   
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            VATS - Varia's Awesome Tracking Software
-          </Typography>
-          <Typography variant="body2" sx={{ mr: 2 }}>
-            Server: {serverStatus === 'checking' ? 'Checking...' : 
-                    serverStatus === 'online' ? '🟢 Online' : '🔴 Offline'}
-          </Typography>
-          <Button 
-            color="inherit" 
-            onClick={handleLogout}
-            sx={{ ml: 1 }}
-          >
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-2">
+            <Monitor className="h-6 w-6 text-primary" />
+            <h1 className="text-xl font-semibold">
+              VATS - Varia's Awesome Tracking Software
+            </h1>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Badge 
+              variant={serverStatus === 'online' ? 'success' : serverStatus === 'offline' ? 'destructive' : 'secondary'}
+              className="flex items-center gap-1"
+            >
+              {serverStatus === 'online' ? (
+                <Wifi className="h-3 w-3" />
+              ) : serverStatus === 'offline' ? (
+                <WifiOff className="h-3 w-3" />
+              ) : (
+                <Clock className="h-3 w-3" />
+              )}
+              Server: {serverStatus === 'checking' ? 'Checking...' : 
+                      serverStatus === 'online' ? 'Online' : 'Offline'}
+            </Badge>
+            
+            <ThemeToggle />
+            
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </header>
       
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
         <React.Suspense fallback={
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-            <Typography variant="h6">Loading VATS Application...</Typography>
-          </Box>
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground">Loading VATS Application...</p>
+            </div>
+          </div>
         }>
           <SimpleHeadsetManager onShowAlert={showAlert} />
         </React.Suspense>
-      </Container>
+      </main>
 
-      <Snackbar
-        open={!!alert}
-        autoHideDuration={6000}
-        onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        {alert && (
-          <Alert 
-            onClose={handleCloseAlert} 
-            severity={alert.severity}
-            sx={{ width: '100%' }}
-          >
-            {alert.message}
+      {/* Alert Toast */}
+      {alert && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <Alert variant={alert.severity === 'success' ? 'success' : 'destructive'} className="min-w-[300px]">
+            {alert.severity === 'success' ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : (
+              <XCircle className="h-4 w-4" />
+            )}
+            <AlertDescription className="flex items-center justify-between">
+              <span>{alert.message}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCloseAlert}
+                className="ml-2 h-auto p-1"
+              >
+                ×
+              </Button>
+            </AlertDescription>
           </Alert>
-        )}
-      </Snackbar>
-    </Box>
+        </div>
+      )}
+    </div>
   );
 }
 
-export default App;
+function AppWithTheme() {
+  return (
+    <ThemeProvider defaultTheme="system" storageKey="vats-ui-theme">
+      <App />
+    </ThemeProvider>
+  );
+}
+
+export default AppWithTheme;
